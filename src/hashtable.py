@@ -66,12 +66,18 @@ class HashTable:
             self.storage[hashKey] = LinkedPair(key, value)
 
         else:
+
             # reference the current node and loop through linked list
             curr_node = self.storage[hashKey]
             inserted = False
 
             # loop through linked list
             while inserted is False:
+
+                if curr_node.key == key:
+                    curr_node.value = value
+                    inserted = True
+                    return
 
                 # if next node exists
                 if curr_node.next is not None:

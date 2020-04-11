@@ -115,7 +115,6 @@ class HashTable:
         # retrieve the value
         while found is False:
             if curr_node is None:
-                print("Retrieve loop")
                 return None
 
             if curr_node.key == key:
@@ -140,13 +139,16 @@ class HashTable:
 
         # move values over
         for bucket in old_storage:
-            curr_bucket = bucket
 
             # use insert method to populate new storage
             if bucket is not None:
                 self.insert(bucket.key, bucket.value)
 
-                while curr_bucket is not None:
+                if bucket.next is not None:
+                    next_bucket = bucket.next
+                    while next_bucket is not None:
+                        self.insert(next_bucket.key, next_bucket.value)
+                        next_bucket = next_bucket.next
 
 
 if __name__ == "__main__":

@@ -90,7 +90,22 @@ class HashTable:
         Fill this in.
         '''
         hashKey = self._hash_mod(key)
-        self.storage[hashKey] = None
+        curr_node = self.storage[hashKey]
+
+        if curr_node.key == key:
+            self.storage[hashKey] = None
+        elif curr_node.next is None:
+            print("Could not find a node with that key.")
+        else:
+            next_node = curr_node.next
+
+            while next_node is not None:
+                if next_node.key == key:
+                    next_node = None
+                    print("Removed node")
+                    return
+                else:
+                    next_node = next_node.next
 
     def retrieve(self, key):
         '''

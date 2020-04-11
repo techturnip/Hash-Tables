@@ -65,9 +65,21 @@ class HashTable:
             # store the value
             self.storage[hashKey] = LinkedPair(key, value)
 
-            self.storage[hashKey].next = self.storage[hashKey]
         else:
-            print('This is what its like when worlds collide.')
+            # reference the current node and loop through linked list
+            curr_node = self.storage[hashKey]
+            inserted = False
+
+            # loop through linked list
+            while inserted is False:
+
+                # if next node exists
+                if curr_node.next is not None:
+                    # set current node to next node iterate
+                    curr_node = curr_node.next
+                else:
+                    curr_node.next = LinkedPair(key, value)
+                    inserted = True
 
     def remove(self, key):
         '''
@@ -94,10 +106,23 @@ class HashTable:
 
         # check if exists
         if self.storage[hashKey] is None:
+            print("Initial None check")
             return None
 
+        curr_node = self.storage[hashKey]
+        found = False
+
         # retrieve the value
-        return self.storage[hashKey].value
+        while found is False:
+            if curr_node is None:
+                print("Retrieve loop")
+                return None
+
+            if curr_node.key == key:
+                found = True
+                return curr_node.value
+            else:
+                curr_node = curr_node.next
 
     def resize(self):
         '''
@@ -106,7 +131,22 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        # store the old storage stuff
+        old_storage = self.storage
+        # double the capacity
+        self.capacity *= 2
+        # setup new storage
+        self.storage = [None] * self.capacity
+
+        # move values over
+        for bucket in old_storage:
+            curr_bucket = bucket
+
+            # use insert method to populate new storage
+            if bucket is not None:
+                self.insert(bucket.key, bucket.value)
+
+                while curr_bucket is not None:
 
 
 if __name__ == "__main__":
@@ -123,16 +163,16 @@ if __name__ == "__main__":
     print(ht.retrieve("line_2"))
     print(ht.retrieve("line_3"))
 
-    # # Test resizing
-    # old_capacity = len(ht.storage)
-    # ht.resize()
-    # new_capacity = len(ht.storage)
+    # Test resizing
+    old_capacity = len(ht.storage)
+    ht.resize()
+    new_capacity = len(ht.storage)
 
-    # print(f"\nResized from {old_capacity} to {new_capacity}.\n")
+    print(f"\nResized from {old_capacity} to {new_capacity}.\n")
 
-    # # Test if data intact after resizing
-    # print(ht.retrieve("line_1"))
-    # print(ht.retrieve("line_2"))
-    # print(ht.retrieve("line_3"))
+    # Test if data intact after resizing
+    print(ht.retrieve("line_1"))
+    print(ht.retrieve("line_2"))
+    print(ht.retrieve("line_3"))
 
-    # print("")
+    print("")

@@ -1,21 +1,24 @@
 # '''
 # Linked List hash table key/value pair
 # '''
+
+
 class LinkedPair:
     def __init__(self, key, value):
         self.key = key
         self.value = value
         self.next = None
 
+
 class HashTable:
     '''
     A hash table that with `capacity` buckets
     that accepts string keys
     '''
+
     def __init__(self, capacity):
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
-
 
     def _hash(self, key):
         '''
@@ -25,7 +28,6 @@ class HashTable:
         '''
         return hash(key)
 
-
     def _hash_djb2(self, key):
         '''
         Hash an arbitrary key using DJB2 hash
@@ -34,14 +36,12 @@ class HashTable:
         '''
         pass
 
-
     def _hash_mod(self, key):
         '''
         Take an arbitrary key and return a valid integer index
         within the storage capacity of the hash table.
         '''
         return self._hash(key) % self.capacity
-
 
     def insert(self, key, value):
         '''
@@ -54,9 +54,38 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        # hash the key
+        hashKey = self._hash_mod(key)
 
+        # check for capacity
+        # if hashKey >= self.capacity:
+        #     self.resize()
 
+        if self.storage[hashKey] is None:
+            # store the value
+            self.storage[hashKey] = LinkedPair(key, value)
+
+        else:
+
+            # reference the current node and loop through linked list
+            curr_node = self.storage[hashKey]
+            inserted = False
+
+            # loop through linked list
+            while inserted is False:
+
+                if curr_node.key == key:
+                    curr_node.value = value
+                    inserted = True
+                    return
+
+                # if next node exists
+                if curr_node.next is not None:
+                    # set current node to next node iterate
+                    curr_node = curr_node.next
+                else:
+                    curr_node.next = LinkedPair(key, value)
+                    inserted = True
 
     def remove(self, key):
         '''
@@ -66,8 +95,23 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        hashKey = self._hash_mod(key)
+        curr_node = self.storage[hashKey]
 
+        if curr_node.key == key:
+            self.storage[hashKey] = None
+        elif curr_node.next is None:
+            print("Could not find a node with that key.")
+        else:
+            next_node = curr_node.next
+
+            while next_node is not None:
+                if next_node.key == key:
+                    next_node = None
+                    print("Removed node")
+                    return
+                else:
+                    next_node = next_node.next
 
     def retrieve(self, key):
         '''
@@ -77,8 +121,28 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
 
+        # hash the key
+        hashKey = self._hash_mod(key)
+
+        # check if exists
+        if self.storage[hashKey] is None:
+            print("Initial None check")
+            return None
+
+        curr_node = self.storage[hashKey]
+        found = False
+
+        # retrieve the value
+        while found is False:
+            if curr_node is None:
+                return None
+
+            if curr_node.key == key:
+                found = True
+                return curr_node.value
+            else:
+                curr_node = curr_node.next
 
     def resize(self):
         '''
@@ -87,8 +151,25 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        # store the old storage stuff
+        old_storage = self.storage
+        # double the capacity
+        self.capacity *= 2
+        # setup new storage
+        self.storage = [None] * self.capacity
 
+        # move values over
+        for bucket in old_storage:
+
+            # use insert method to populate new storage
+            if bucket is not None:
+                self.insert(bucket.key, bucket.value)
+
+                if bucket.next is not None:
+                    next_bucket = bucket.next
+                    while next_bucket is not None:
+                        self.insert(next_bucket.key, next_bucket.value)
+                        next_bucket = next_bucket.next
 
 
 if __name__ == "__main__":
